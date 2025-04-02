@@ -1,1 +1,962 @@
-Hello world!
+<!DOCTYPE html>
+<html>
+<!-- <body onload = "checkCookies()"; onload="checkCookie()"> -->
+<body onload="checkCookie()">
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 5px;
+    }
+</style>
+<h1>JavaScript Iterables</h1>
+<h2>1. Make an object iterable</h2>
+<p id = "Cookies_status"></p>
+<p id="Iterator Demo"></p>
+
+<script>
+function checkCookies() {
+    let text_cookies = "";
+    alert("This message was triggered from\n the onload event!")
+    if(navigator.cookieEnabled == true) {
+        text_cookies = "Cookies are enabled.";
+    } else {
+        text_cookies = "Cookies are disabled.";
+    }
+    document.getElementById("Cookies_status").innerHTML = text_cookies;
+}    
+// Create an object
+myNumbers={}
+// Make it Iterable
+myNumbers[Symbol.iterator]=function() {
+    let n=0;
+    done=false;
+    return {
+        next(){
+            n+=10;
+            if(n==100){done=true}
+            return {value:n, done:done};
+        }
+    };
+}
+
+// Create an Iterator
+let iterator = myNumbers[Symbol.iterator]();
+{
+let text = "";
+while(true) {
+    const result = iterator.next();
+    if(result.done) break;
+    text += result.value + "<br>";
+}
+document.getElementById("Iterator Demo").innerHTML = text;
+}
+</script>
+
+<h1>2. JavaScript SETS</h1>
+<p id="SET DEMO"></p>
+<h2>list items of Set</h2>
+<p id="list set"></p>
+<script>
+    const letters = new Set(["a","b","c"]);
+
+    if (letters instanceof Set) {
+        document.getElementById("SET DEMO").innerHTML = "letter is instance of SET, " + "letter type is " + typeof letters;
+    } else {
+        document.getElementById("SET DEMO").innerHTML = "letter is not instance of SET, " + "letter type is " + typeof letters;
+    }
+    {
+    let text = "";
+    letters.add("L");
+    letters.forEach(function(value){text += value + "<br>"});
+    if (letters.has("L")){
+        document.getElementById("list set").innerHTML = text;
+    } else {
+        document.getElementById("list set").innerHTML = "Does not have this letter!"
+    }
+    }
+</script>
+<h1>3. Javascript map</h1>
+<p id="MAP DEMO"></p>
+<p id="MODIFY MAP DEMO"></p>
+<p id="MAP GROUP"></p>
+<script>
+    const fruits = new Map([["apple",500],["banana",300],["orange",400]]);
+    document.getElementById("MAP DEMO").innerHTML = "fruit map size:" + fruits.size +". " + fruits.get("apple") + " " + fruits.get("banana") + " " + fruits.get("orange");
+    fruits.set("pear",100);
+    let text="";
+    //fruits.forEach(function(value, key){text += key + ": " + value + " "});
+    for(const x of fruits.values()) {text += x + ";";}
+    document.getElementById("MODIFY MAP DEMO").innerHTML = "value: " + text;
+
+    const fruits_obj = [{name:"apple", quantity:300},
+        {name:"banana", quantity:500},
+        {name:"orange", quantity:200},
+        {name:"kiwi", quantity:150}
+    ];
+    function groupCallback({quantity}){
+        return quantity > 200 ? "ok":"low";
+    }
+    const groupResult = Map.groupBy(fruits_obj, groupCallback);
+    text="These fruits are OK: <br>";
+    for (x of groupResult.get("ok")) {
+        text += x.name + ": " +  x.quantity + "<br>";
+    }
+    text+="These fruits are LOW: <br>";
+    for (x of groupResult.get("low")) {
+        text += x.name + ": " + x.quantity + "<br>";
+    }
+    document.getElementById("MAP GROUP").innerHTML = text;
+</script>
+
+<h1>4. Javascript typeof</h1>
+
+<h1>5. Javascript type conversation</h1>
+<p id="NUMBER DEMO"></p>
+<script>
+    text=""
+    text += "PI: " + Number(Math.PI) + "  " + "Space: " + Number("  ") + "  " + "NaN: " + Number("99 99");
+    document.getElementById("NUMBER DEMO").innerHTML = text;
+</script>
+<h1>6. html link</h1>
+<p><a href="javascript:void(0);">Useless link</a></p>
+<h1>7. variable unpack</h1>
+<p id="VARIABLE UNPACK" style="font-family:courier"></p>
+<h2>Swapping JavaScript Variables: [firstname, lastname ] = [lastname, firstname]</h2>
+<script>
+    const fruits_set = ["Bananas", "Oranges", "Apples", "Mangos", "Pears"];
+    //let {[1]:unpack_variable1, [0]:unpack_variable2, [3]:unpack_variable3} = fruits_set;
+    let [unpack_variable1, unpack_variable2,...rest] = fruits_set;
+    document.getElementById("VARIABLE UNPACK").innerHTML = unpack_variable1 + " " + unpack_variable2 + " " + rest;
+    
+</script>
+<h1>8. JavaScript bitwise</h1>
+<h1>9. JavaScript errors</h1>
+<p id="EXCEPTION"></p>
+<script>
+    try {
+        throw "welcome error!";
+    }
+    catch(err) {
+        document.getElementById("EXCEPTION").innerHTML = err.message + "-" + err.name;
+    }
+</script>
+<p>please input a number between 5 - 10:</p>
+<input id="TRYCATCH" type="number" min="5" max="10" step="1"></input>
+<button type="button" onclick="exception_test()">Eception_test</button>
+<p id="exception_try"></p>
+<script>
+    function exception_test(){
+        const message = document.getElementById("exception_try");
+        message.innerHTML = "";
+        let x = document.getElementById("TRYCATCH").value;
+        console.log(x);
+        try {
+            //if(x.trim() == "") throw "empty";
+            //if(isNaN(x)) throw "not a number";
+            //x = Number(x);
+            if(x<5) throw "too low";
+            if(x>10) throw "too high";
+        }
+        catch (err) {
+            message.innerHTML = "input is " + err;
+        }
+        finally {
+            
+        }
+    }
+</script>
+<button onclick="this.style.display='none'">click to remove me!</button>
+<h1>10. JavaScript Class</h1>
+<p id="CLASS"></p>
+<script>
+    class Car {
+        constructor(name, year){
+            this.name = name;
+            this.year = year;
+        }
+        age() {
+            const date = new Date();
+            return date.getFullYear() - this.year;
+        }
+    }
+    const car1 = new Car("Ford",2000);
+    const car2 = new Car("Audi", 2020);
+    document.getElementById("CLASS").innerHTML = car1.name + "; year: " + car1.age() + "; " + 
+        car2.name + "; year:" + car2.age();
+</script>
+<h1>11. JavaScript JSON</h1>
+<p id="demo_json"></p>
+<script>
+    text = '{ "employees" : [{ "firstName":"John" , "lastName":"Doe" }, \
+                            { "firstName":"Anna" , "lastName":"Smith" }, \
+                            { "firstName":"Peter" , "lastName":"Jones" }, \
+                            { "www": "lisg", "www1": "hua"} ]}';
+    const obj_json = JSON.parse(text);
+    document.getElementById("demo_json").innerHTML = obj_json.employees[3].www;
+
+// </script src="my.js">
+// <script type="module">
+//    import message from "./message.js"; 
+// </script>
+
+<h1>12. JavaScript promise object</h1>
+<h2>The then() Method</h2>
+<p id="demo_promise"></p>
+<p id="demo_async"></p>
+<script>
+/*
+    function myDisplayer(some) {
+        document.getElementById("demo_promise").innerHTML = some;
+    }
+    let myPromise_m = new Promise(function(myResolve, myRejiect){
+        let req = new XMLHttpRequest();
+        req.open('GET', "mycar.html");
+        req.onload = function() {
+            if (req.status == 200) {
+                myResolve(req.response);
+            } else {
+                myReject("File not found");
+            }
+        };
+        req.send();
+    });
+    myPromise_m.then(function(value){myDisplayer(value);}, function(error){myDisplayer(error);});
+*/
+    async function myDisplay() {
+        let myPromise = new Promise(function(resolve, reject) {
+            setTimeout(function() { resolve("I love you!");}, 3000);
+        });
+        document.getElementById("demo_promise").innerHTML = await myPromise;
+    }
+    myDisplay();
+
+    async function getFile() {
+        let myPromise_1 = new Promise(function(resolve) {
+            //let req = new XMLHttpRequest();
+            //req.open('GET', "mycar.html");
+            //req.onload = function() {
+             //   if (req.status == 200) {
+             //       resolve(req.response);
+              //  } else {
+                    resolve("Fine not found");
+               // }
+            //};
+            //req.send();
+        });
+        document.getElementById("demo_async").innerHTML = await myPromise_1;
+    }
+    getFile();
+  
+</script>
+
+<h2>13.JavaScript HTML DOM</h2>
+<p>Finding HTML Elements Using <b>document.forms</b>.</p>
+
+<form id="frm1">
+    First name: <input type="text" name="fname" value="Donald"><br>
+    Last name: <input type="text" name="fname" value="Duck"><br><br>
+    <button type="button" onclick="frm1_func()">submit</button>
+</form>
+<p>These are the values of each element in the form:</p>
+<p id="demo_dom"></p>
+<script>
+    function frm1_func() {
+        const x = document.forms["frm1"];
+        text="";
+        for(let i = 0; i < x.length; i++) {
+            text += x.elements[i].value + "<br>";
+        }
+        document.getElementById("demo_dom").innerHTML = text;
+    }
+</script>
+
+<img id="myImage" src="D:\WorkDiary\Java\JavaScript\Picture\simple.gif">
+<script>
+    
+    document.getElementById("myImage").src="RepairForBeginners.gif";
+    document.write(Date());
+</script>
+
+<h2>14. JavaScript Validation</h2>
+<p id = "p2">Please input a number between 1 and 10:</p>
+<input id="numb">
+<button type="button" onclick="myFunction()">Submit</button>
+<p id="demo_validation"></p>
+<script>
+    function myFunction() {
+        let val_num = document.getElementById("numb").value;
+        let text_val = "";
+        if (isNaN(val_num) || val_num < 1 || val_num > 10) {
+            text_val = "Input not valid";
+        } else {
+            text_val = "Input ok";
+        }
+        document.getElementById("demo_validation").innerHTML = text_val;
+    }
+    
+</script>
+<button type="button" onclick="document.getElementById('p2').style.color = 'green'">Click me!</button>
+<input type="button" value="hide text" onclick="document.getElementById('p2').style.visibility = 'hidden'">
+<input type="button" value="show text" onclick="document.getElementById('p2').style.visibility = 'visible'">
+
+<h2>15. Javascript animation</h2>
+<p><button onclick="myMove()">Click Me</button></p>
+<style>
+#container {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    background: yellow;
+}
+#animate {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    background: red;
+}
+</style>
+
+<div id="container">
+    <div id="animate"></div>
+</div>
+<script>
+    function myMove() {
+        let id = null;
+        const elem = document.getElementById("animate");
+        let pos = 0;clearInterval(id);
+        id = setInterval(frame, 5);
+        function frame() {
+            if (pos == 350) {
+                clearInterval(id);
+            } else {
+                pos++;
+                elem.style.top = pos + "px";
+                elem.style.left = pos + "px";
+            }
+        }
+    }
+</script>
+
+<h2>16. Java script HTML DOM event</h2>
+<!-- <h1 onclick="this.innerHTML = 'Ooops!'">Click on this text!</h1> -->
+<h1 onclick="changeText(this)">Click on this text!!</h1>
+<script>
+    function changeText(id) {
+        id.innerHTML = "Great!!";
+    }
+</script>
+
+<h2 >17. Javascript Event</h2>
+Enter your name: <input type="text" id="fname" oninput="upperCase()">
+<script>
+    function upperCase() {
+        const x_fname = document.getElementById("fname");
+        x_fname.value = x_fname.value.toUpperCase(); 
+    }
+    function upperCase_c() {
+        const x_fname = document.getElementById("fname_c");
+        x_fname.value = x_fname.value.toUpperCase(); 
+    }
+    function myFocus(obj) {
+        obj.style.backgroundColor = "yellow";
+    }
+</script>
+</br>
+Enter your name change to upper: <input type="text" id="fname_c" onchange="upperCase_c()" onfocus="myFocus(this)">
+
+
+<h1 onmouseover="style.color='red'" onmouseout="style.color='black'">18. Java script mouse over and mouse out events</h1>
+<div onmouseover="mOver(this)" onmouseout="mOut(this)" 
+    onmousedown="mDown(this)" onmouseup="mUp(this)" 
+    style="background-color:#D94A38;width:100px;height:20px;padding:40px;">
+    Mouse over me
+</div>
+<script>
+    function mOver(obj) {
+        obj.innerHTML = "Click me";
+    }
+    function mOut(obj) {
+        obj.innerHTML = "Game over";
+    }
+    function mDown(obj) {
+        obj.style.backgroundColor = "#1ec5e5";
+        obj.innerHTML = "Release me";
+    }
+    function mUp(obj) {
+        obj.style.backgroundColor = "#D94A38";
+        obj.innerHTML = "Thank you";
+    }
+</script>
+<h2>18. Java Script addEventListener</h2>
+<button id="myBtn_listener">Try it</button>
+<p id="demo_listener"></p>
+<script>
+    document.getElementById("myBtn_listener").addEventListener("mouseover", displayDate_listener);
+    function displayDate_listener() {
+        document.getElementById("demo_listener").innerHTML = Date();
+        document.getElementById("demo_listener").style.visibility = 'visible';
+    }
+    document.getElementById("myBtn_listener").addEventListener("mouseout", hideDate_listener);
+    function hideDate_listener() {
+        document.getElementById("demo_listener").style.visibility = 'hidden';
+    }
+    document.getElementById("myBtn_listener").addEventListener("click", function(){ alert("Hello World!"); });
+</script>
+
+<h2>19. JavaScript resize window</h2>
+<p id="resize_demo"></p>
+<script>
+    window.addEventListener("resize", function(){
+        document.getElementById("resize_demo").innerHTML = Math.random();
+    });
+</script>
+<h2>20. Event Bubbling or Capturing</h2>
+<head>
+    <style>
+        #myDiv1, #myDiv2 {
+            background-color: coral;
+            padding: 50px;
+        }
+        #myP1, #myP2 {
+            background-color: white;
+            font-size: 20px;
+            border: 1px solid;
+            padding: 20px;
+        }
+    </style>
+    <!-- <meta content = "text/html; charset=utf-8" http-equiv="Content-Type"> --->
+</head>
+
+<div id="myDiv1">
+    <h2>Bubbling:</h2>
+    <p id="myP1">Click me!</p>
+</div><br>
+<div id="myDiv2">
+    <h2>Capturing:</h2>
+    <p id="myP2">Click my!</p>
+</div><br>
+<script>
+    document.getElementById("myP1").addEventListener("click", function(){
+        alert("You clicked the white element!");}, false);
+    document.getElementById("myDiv1").addEventListener("click", function(){
+        alert("You clicked the orange element!");}, false);
+    document.getElementById("myP2").addEventListener("click", function(){
+        alert("You clicked the white element!");}, true);
+    document.getElementById("myDiv2").addEventListener("click", function(){
+        alert("You clicked the orange element!");}, true);
+</script>
+
+<style>
+    #myDIV_remove {
+        background-color: coral;
+        border: 1px solid;
+        padding: 50px;
+        color: white;
+        font-size: 20px;
+    }
+</style>
+<div id="myDIV_remove">
+    <p>This div element has an onmousemove event handler
+        that displays a random number every time you move
+        your mouse inside this orange field.
+    </p>
+    <p>Click the button to remove the div's event handler.</p>
+    <button onclick="removeHandler()" id="myBtn_remove">remove</button>
+</div>
+<p id="demo_remove"></p>
+<script>
+    document.getElementById("myDIV_remove").addEventListener("mousemove", myFunction_remove);
+    function myFunction_remove() {
+        document.getElementById("demo_remove").innerHTML = Math.random();
+    }
+    function removeHandler() {
+        document.getElementById("myDIV_remove").removeEventListener("mousemove", myFunction_remove);
+    }
+</script>
+
+<h2>21. Javascript the nodeName property</h2>
+<h1 id="id01">My First Page</h1>
+<p id="id02"></p>
+<p id="id03"></p>
+<script>
+    document.getElementById("id02").innerHTML = document.getElementById("id01").nodeName;
+    document.getElementById("id03").innerHTML = document.getElementById("id01").nodeType;
+</script>
+<h2>22. JavaScript HTML DOM elements</h2>
+<div id="div1-elements">
+    <p id="p1-elements">This is a paragraph.</p>
+    <p id="p2-elements">This is another paragraph</p>
+</div>
+<script>
+    const para = document.createElement("p");
+    const node = document.createTextNode("This is new.");
+    para.appendChild(node);
+    const elem_p = document.getElementById("div1-elements");
+    const elem_c1 = document.getElementById("p1-elements");
+    const elem_c2 = document.getElementById("p2-elements");
+    elem_p.insertBefore(para, elem_c1);
+    //elem_c2.remove();
+    //elem_c1.parentNode.removeChild(elem_c1);
+    //elem_p.removeChild(elem_c1);
+    //elem_p.replaceChild(elem_c2, para);
+    const myCollection = document.getElementsByTagName("p");
+    document.getElementById("p2-elements").innerHTML = "The innerHTML of the second paragraph is: " + 
+    myCollection[1].innerHTML + "len: " + myCollection.length;
+    const myNodelist = document.querySelectorAll("p");
+    for (let i = 0; i < myNodelist.length; i++) {
+        myNodelist[i].style.color = "green";
+    }
+
+    console.log(window.innerHeight, window.innerWidth);
+</script>
+
+<h2>23. JavaScript Window Location</h2>
+<p id="demo_windowlocation"></p>
+<p id="demo_windowhostname"></p>
+<p id="demo_windowpathname"></p>
+<p id="demo_windowprotocol"></p>
+<p id="demo_windowlocalport"></p>
+<input type="button" value="load new document" onclick="newDoc()">
+<script>
+    document.getElementById("demo_windowlocation").innerHTML = window.location.href;
+    document.getElementById("demo_windowhostname").innerHTML = "HostName: " + window.location.hostname;
+    document.getElementById("demo_windowpathname").innerHTML = "pathname: " + window.location.pathname;
+    document.getElementById("demo_windowprotocol").innerHTML = "protocol: " + window.location.protocol;
+    document.getElementById("demo_windowlocalport").innerHTML = "localport: " + window.location.port;
+    function newDoc() {
+        window.location.assign("https://www.w3schools.com");
+    }
+</script>
+
+<h2>24. JavaScript window history</h2>
+<input type="button" value="back" onclick="goBack()">
+<input type="button" value="forward" onclick="goForward()">
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    function goForward() {
+        window.history.forward();
+    }
+</script>
+
+<h2>25. JavaScript window navigator</h2>
+<p id="window_navigator_bool"></p>
+<p id="window_navigator_app"></p>
+<p id="window_navigator_eng"></p>
+<p id="tip_confirm"></p>
+<p id="tip_prompt"></p>
+<script>
+    document.getElementById("window_navigator_bool").innerHTML = "Cookie Enable: " + window.navigator.cookieEnabled + "; platform: " + window.navigator.platform
+    + "; language: " + window.navigator.language + "; online: " + window.navigator.onLine + "; JavaEnable: " + window.navigator.javaEnabled();
+    //document.getElementById("window_navigator_app").innerHTML = "app name: " + window.navigator.appName;
+    document.getElementById("window_navigator_app").innerHTML = "app name: " + window.navigator.appCodeName + "; agent: " + window.navigator.userAgent;
+    document.getElementById("window_navigator_eng").innerHTML = "engin name: " + window.navigator.product + "; version: " + window.navigator.appVersion;
+
+    if(confirm("Press the button")) {
+        text = "press ok";
+    } else {
+        text = "press cancel";
+    }
+    document.getElementById("tip_confirm").innerHTML = text;
+    let person = window.prompt("please enter your name", "harry poter");
+    if (person == null || person == "") {
+        text = "user cancel the prompt.";
+    } else {
+        text = "Hello " + person;
+    }
+    document.getElementById("tip_prompt").innerHTML = text;
+</script>
+
+<h2>26. JavaScript timing event</h2>
+<button onclick="myVar_timer=setTimeout(myFunction_timer, 1000)">try it</button>
+
+<button onclick="clearTimeout(myVar_timer); clearInterval(myVar_interval)">stop it</button>
+<p id="myTimer_interval"></p>
+<script>
+    function myFunction_timer() {
+        alert("Hello timer event");
+    }
+    myVar_interval = window.setInterval(myTimer_interval, 1000);
+    function myTimer_interval() {
+        const d_interval = new Date();
+        document.getElementById("myTimer_interval").innerHTML = d_interval.toLocaleTimeString();
+    }
+</script>
+<h2>27. JavaScript cookies</h2>
+<p id="demo_cookie"></p>
+<script>
+    let x_cookie = document.cookie;
+    document.getElementById("demo_cookie").innerHTML = "document.cookie: " + x_cookie;
+    function setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";" + "path=/";
+    }
+
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        console.log(decodedCookie);
+        let ca = decodedCookie.split(';');
+        for(let i=0; i<ca.length; i++) {
+            let c = ca[i];
+            console.log(c);
+            while(c.charAt(0) == ' ') {
+                c = c.substring(1);
+                console.log(c);
+            }
+            if(c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    function checkCookie() {
+        let user = getCookie("username");
+        if (user != "") {
+            alert("Welcome again " + user);
+        } else {
+            user = prompt("Please enter your name: ","");
+            if(user != "" && user != null) {
+                setCookie("username", user, 30);
+            }
+        }
+    }
+</script>
+<h2>28. JavaScript Geolocation</h2>
+<button onclick="getLocation()">Try It</button>
+<p id="demo_geolocation"></p>
+<script>
+    function getLocation(){
+        try {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } catch(err) {
+            document.getElementById("demo_geolocation").innerHTML=err;
+        }
+    }
+    function showPosition(position) {
+        document.getElementById("demo_geolocation").innerHTML= 
+        "Latitude: " + position.coords.latitude +
+        "<br>Longitude: " + position.coords.longitude;
+    }
+</script>
+<h2>29. JavaScript validation</h2>
+<input id="id1_validation" type="number" min="100" max="200" required>
+<button onclick="myFunction_validation()">OK</button>
+<p id="id2_validation"></p>
+<script>
+    function myFunction_validation() {
+        const inpObj = document.getElementById("id1_validation");
+        if (!inpObj.checkValidity()) {
+            document.getElementById("id2_validation").innerHTML = inpObj.validationMessage;
+
+        } else {
+            document.getElementById("id2_validation").innerHTML = "Input Ok";
+        }
+    }
+</script>
+
+<h2>30. javaScript Web Storage API</h2>
+<p id="demo_storage"></p>
+<script>
+    localStorage.setItem("name", "Lisg");
+    document.getElementById("demo_storage").innerHTML = localStorage.getItem("name");
+</script>
+
+<h2>31. JavaScript Web Workers API</h2>
+<p>Count numbers: <output id="worker_result"></output></p>
+<button onclick="startWorker()">Start Worker</button>
+<button onclick="stopWorker()">Stop Worker</button>
+<script>
+    let w_worker;
+    function startWorker() {
+        if(Worker == "undefined") {
+            console.log("can not support worker")
+        }
+        if (typeof(w_worker) == "undefined") {
+            w_worker = new Worker("demo_workers.js");
+        }
+        w_worker.onmessage = function(event) {
+            document.getElementById("worker_result").innerHTML = event.data;
+        };
+    }
+    function stopWorker() {
+        w_worker.terminate();
+        w_worker=undefined;
+    }
+</script>
+
+<h2>32. Javascript AJAX introduction</h1>
+<div id="demo_AJAX_introduction">
+    <h2>The XMLHttpRequest Object</h2>
+    <button type="button" onclick="loadDoc()">Change Content</button>
+</div>
+<script>
+    function loadDoc() {
+        const xhttp = new XMLHttpRequest();
+        
+        xhttp.onload=function(){
+            console.log("--->" + xhttp.status);
+            document.getElementById("demo_AJAX_introduction").innerHTML = this.responseText;
+        }
+        xhttp.open("GET", "http://127.0.0.1:5500/ajax_info.txt", true);
+        xhttp.send();
+    }
+</script>
+
+<h2>33. JavaScript XMLHttpRequest Object</h2>
+<button type="button" onclick="loadXML()">Get my CD collection</button>
+<br><br>
+<table id="demo_XML"></table>
+<script>
+    function loadXML() {
+        const xhttp=new XMLHttpRequest();
+        xhttp.onload = function(){myXMLFunction(this);};
+        xhttp.open("GET","http://127.0.0.1:5500/cd_catalog.xml", true);
+        xhttp.send();
+    }
+    function myXMLFunction(xml) {
+        const xmlDOC = xml.responseXML;
+        const x = xmlDOC.getElementsByTagName("CD");
+        let table = "<tr><th>Artist</th><th>Title</th></tr>";
+        for(let i = 0; i<x.length; i++) {
+            table += "<tr><td>" + x[i].getElementsByTagName("ARTIST")[0].childNodes[0].nodeValue + "</td><td>" + 
+                x[i].getElementsByTagName("TITLE")[0].childNodes[0].nodeValue + "</td></tr>";
+        }
+        document.getElementById("demo_XML").innerHTML = table;
+    }
+</script>
+
+<h2>34. JavaScript AJAX PHP/ASP Example</h2>
+<p>Start typing a name in the input field below:</p>
+<p>Suggestions: <span id="txtHint"></span></p>
+
+<form>
+    First name: <input type="text" onkeyup="showHint(this.value)">
+</form>
+<script>
+    function showHint(str) {
+        if (str.length == 0) {
+            document.getElementById("txtHint").innerHTML = "";
+            return;
+        } else {
+            const xmlhttp = new XMLHttpRequest();
+            xmlhttp.onload = function() {
+                document.getElementById("txtHint").innerHTML = this.responseText;
+            }
+            //xmlhttp.open("GET", "http://127.0.0.1:5500/gethint.php?q=" + str);
+            xmlhttp.open("GET", "http://127.0.0.1:5500/gethint.asp?q=" + str);
+            xmlhttp.send();
+        }
+    }
+</script>
+<h2>35. JavaStript JSON stringify</h2>
+<p id="JSON_string_demo"></p>
+<script>
+    const JSON_string_obj = {name: "John", age: 31, city: "New York"};
+    const myJsonString = JSON.stringify(JSON_string_obj);
+    localStorage.setItem("testJSON", myJsonString);
+    //retrieve data:
+    let text_string = localStorage.getItem("testJSON");
+    let objJsonString = JSON.parse(text_string);
+    const num = 123e-5;
+    let bool = new Boolean(1);
+    let date = new Date();
+    const obj_function = {name: "John", age: function(){return 30;}, city: "New York"};
+    obj_function.age = obj_function.age.toString();
+    
+    //document.getElementById("JSON_string_demo").innerHTML = objJsonString.city;
+    document.getElementById("JSON_string_demo").innerHTML = JSON.stringify(obj_function);
+
+</script>
+
+<h2>36. Javascript JSON Data from a PHP Server</h2>
+<p id="demo_PHP"></p>
+<script>
+    const xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.onload = function() {
+        const myObj = JSON.parse(this.responseText);
+        document.getElementById("demo_PHP").innerHTML = myObj.name;
+    }
+    xmlhttp.open("GET", "http://127.0.0.1:5500/demo_file.php");
+    xmlhttp.send();
+</script>
+<h2>37. JavaScript HTML Canvas</h2>
+<canvas id="myCanvas" width="400" height="400" style="border:1px solid grey"></canvas>
+<canvas id="myCanvas_line" width="400" height="400" style="border:1px solid grey"></canvas>
+
+<script>
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.height = canvas.width;
+    ctx.transform(1,0,0,-1,0,canvas.height);
+    const xArray = [50,60,70,80,90,100,110,120,130,140,150];
+    const yArray = [7,8,8,9,9,9,10,11,14,14,15];
+    ctx.fillStyle = "red";
+    for (let i =0; i<xArray.length-1;i++) {
+        let x = xArray[i]*400/150;
+        let y = yArray[i]*400/15;
+        ctx.beginPath();
+        ctx.ellipse(x,y,3,3,0,0,Math.PI*2);
+        ctx.fill();
+    }
+
+    const canvas_line = document.getElementById("myCanvas_line");
+    const ctx_line = canvas_line.getContext("2d");
+    ctx_line.fillStyle = "#FF0000";
+    canvas_line.height = canvas_line.width;
+    ctx_line.transform(1,0,0,-1,0,canvas_line.height);
+    let xMax = canvas_line.height;
+    let slope = 1.2;
+    let intercept = 70;
+    ctx_line.moveTo(0, intercept);
+    ctx_line.lineTo(xMax, f(xMax));
+    ctx_line.strokeStyle = "black";
+    ctx_line.stroke();
+    function f(x) {
+        return x * slope + intercept;
+    }
+</script>
+<h2>38. JavaScript Plotly.js</h2>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<div id="myPlot" style="width:100%;max-width:700px"></div>
+<div id="myPlot_pie" style="width:100%;max-width:700px"></div>
+<div id="myPlot_sin" style="width:100%;max-width:700px"></div>
+<div id="myPlot_plot" style="width:100%;max-width:700px"></div>
+<div id="myPlot_graphs" style="width:100%;max-width:700px"></div>
+<div id="myPlot_bubble" style="width:100%;max-width:700px"></div>
+<div id="myPlot_line" style="width:100%;max-width:700px"></div>
+
+<script>
+    //const xArray_P=["Italy", "France", "Spain", "USA", "Argentina"];
+    //const yArray_P=[55,49,44,24,15];
+    const yArray_P=["Italy", "France", "Spain", "USA", "Argentina"];
+    const xArray_P=[55,49,44,24,15];
+    /*const data=[{
+        x:xArray_P,
+        y:yArray_P,
+        type:"bar",
+        orientation:"h",
+        marker: {color:"rgba(0,0,255,0.6)"}
+    }];*/
+
+    const layout = {title: "World Wide Wine Production"};
+    const data=[{labels:xArray_P, valus:yArray_P, type:"pie"}];
+    const data_plot=[{
+        x:xArray,
+        y:yArray,
+        mode:"markers"
+    }];
+    Plotly.newPlot("myPlot_pie", data, layout);
+    let exp = "Math.cos(x)"; //"Math.sin(x)";
+    const xValues=[];
+    const yValues=[];
+    for(let x=0; x<=10; x+=0.1){
+        xValues.push(x);
+        yValues.push(eval(exp));
+    }
+    const data_sin=[{x:xValues, y:yValues, mode:"markers"}];
+    const layout_sin = {title:"y=" + exp};
+    const layout_plot = {xaxis: {range:[40,160],title:"Square Meters"},
+                         yaxis: {range:[5,16],title:"Price in Millions"},
+                         title: "House Price vs. Size"};
+    
+    Plotly.newPlot("myPlot_sin", data_sin, layout_sin);
+    Plotly.newPlot("myPlot_plot",data_plot,layout_plot);
+    const data_graphs = [{
+        x: xArray,
+        y: yArray,
+        mode: "lines",
+        type: "scatter"
+    }];
+    const layout_graphs = {xaxis: {range:[40,160],title:"Square Meters"},
+                         yaxis: {range:[5,16],title:"Price in Millions"},
+                         title: "House Price vs. Size"};
+    Plotly.newPlot("myPlot_graphs", data_graphs, layout_graphs);
+    const xArray_bubble = [1,2,3,4];
+    const yArray_bubble = [10,20,30,40];
+    const trace1_bubble = {
+        x: xArray_bubble,
+        y: yArray_bubble,
+        mode:'markers',
+        marker:{
+            color:['red','green','blue','orange'],
+            size:[20,30,40,50]
+        }
+    };
+    const trace2_bubble = {
+        x:[1,2,3,4],
+        y:[15,30,45,60],
+        mode:'markers',
+        marker:{
+            color:'rgb(31,119,180)',
+            size:18,
+            symbol:['circle','square','diamond','cross']
+        }
+    };
+    const data_bubble = [trace1_bubble, trace2_bubble];
+    const layout_bubble = {title:"Plotting Bubbles"};
+    Plotly.newPlot('myPlot_bubble', data_bubble, layout_bubble);
+
+    let exp_line = "x+17";
+    const xValues_line=[];
+    const yValues_line=[];
+    for(let x=0;x<=10;x+=1){
+        xValues_line.push(x);
+        yValues_line.push(eval(exp));
+    }
+    const data_line = [{
+        x:xValues_line,
+        y:yValues_line,
+        mode:"lines"
+    }];
+    const layout_line={title:"y="+exp};
+    Plotly.newPlot("myPlot_line", data_line, layout_line);
+</script>
+
+<h2>39. Javascript Google Chart</h2>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="myChart_Google" style="width:100%; max-width:600px; height:500px;"></div>
+<script>
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart(){
+        const data = google.visualization.arrayToDataTable([
+            ['Contry','Mhl'],
+            ['Italy',55],
+            ['France',49],
+            ['Spain',44],
+            ['USA',24],
+            ['Argentina',15]
+        ]);
+        const data_line=google.visualization.arrayToDataTable([['price', 'size'],
+        [50,7],[60,8],[70,8],[80,9],[90,9],
+        [100,9],[110,10],[120,11],
+        [130,14],[140,14],[150,15]
+        ]);
+        const options_line = {
+            title: 'house prices vs. size',
+            hAxis: {title: 'Square Meters'},
+            vAxis: {title: 'Price in Millions'},
+            legend: 'none'
+        };
+
+        const options = {
+            title: 'World Wide Wine Production',
+            is3D:true
+        }
+        //const options={title:'World wide wine production'};
+        const chart = new google.visualization.ScatterChart(document.getElementById('myChart_Google'));
+        chart.draw(data_line, options_line);
+    }
+
+</script>
+</body>
+</html>
